@@ -11,7 +11,7 @@ def read_urls():
             'results_wine_hovercard_score']
 
     for c in countries:
-        tmp = pd.read_csv('url_results/run_results_' + c + '.csv')
+        tmp = pd.read_csv('../../data/url_results/run_results_' + c + '.csv')
         tmp = tmp[cols]
         tmp['country'] = c
 
@@ -54,7 +54,7 @@ df = read_urls()
 
 # have ten jobs running 1-100, 101-200, ..., 901-1000
 # have 9 more jobs 1001-2000, ..., 9001-10000
-start = 9001
-finish = 10000
+start = 40001
+finish = df.shape[0] - 1
 
 jsonify_n(start, finish, df)
