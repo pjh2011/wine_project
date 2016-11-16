@@ -44,6 +44,27 @@ def create_name_words(names):
 
     return name_words
 
+
+def print_top_words(clusts, cv_obj, tfidf_mat, n_words):
+
+    keys = cv.vocabulary_.keys()
+    vals = cv.vocabulary_.values()
+
+    word_lookup = dict(zip(vals, keys))
+
+    for j in np.unique(clusts):
+        clust_cvs = tfidf_mat[clusts == j, :]
+        ranked_words = np.argsort(clust_cvs.mean(axis=0))
+
+        print "#################"
+        print "CLUSTER NUMBER: ", j
+        print "#################"
+
+        for i in range(1, n_words + 1):
+            print word_lookup[ranked_words[0, -i]]
+
+        print '\n'
+
 if __name__ == "__main__":
 
     # read in data from cleaned csvs
