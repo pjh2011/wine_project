@@ -3,7 +3,10 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.cluster import KMeans
 import numpy as np
 from scipy import sparse
-from stopwords import english_stop_words
+from stopwords import english_stop_words, wine_names_places, french_stop_words
+import matplotlib.pyplot as plt
+from sklearn.decomposition import TruncatedSVD, NMF, LatentDirichletAllocation
+from sklearn.manifold import TSNE
 
 
 def read_files(names):
@@ -45,7 +48,7 @@ def create_name_words(names):
     return name_words
 
 
-def print_top_words(clusts, cv_obj, tfidf_mat, n_words):
+def print_top_clust_words(clusts, cv_obj, tfidf_mat, n_words):
 
     keys = cv.vocabulary_.keys()
     vals = cv.vocabulary_.values()
@@ -54,16 +57,55 @@ def print_top_words(clusts, cv_obj, tfidf_mat, n_words):
 
     for j in np.unique(clusts):
         clust_cvs = tfidf_mat[clusts == j, :]
-        ranked_words = np.argsort(clust_cvs.mean(axis=0))
+        ranked_words = np.fliplr(np.argsort(clust_cvs.mean(axis=0)))
 
         print "#################"
         print "CLUSTER NUMBER: ", j
         print "#################"
 
-        for i in range(1, n_words + 1):
-            print word_lookup[ranked_words[0, -i]]
+        for i in range(n_words):
+            print word_lookup[ranked_words[0, i]]
 
         print '\n'
+
+
+def print_top_matrix_words(cv_obj, term_matrix, n_words):
+    keys = cv_obj.vocabulary_.keys()
+    vals = cv_obj.vocabulary_.values()
+
+    word_lookup = dict(zip(vals, keys))
+
+    for i in range(term_matrix.shape[0]):
+        ranked_words = np.fliplr(np.argsort(term_matrix[i, :]))
+
+        print "#################"
+        print "TOPIC NUMBER: ", i
+        print "#################"
+
+        for j in range(n_words):
+            print word_lookup[ranked_words[j]]
+
+        print '\n'
+
+
+def plot_svd(x_svd, clusts=None, x=0, y=1, z=2):
+    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'brown', 'gold', 'brown']
+
+    if clusts is not None:
+        for i in np.unique(clusts):
+            x_clust = x_svd[clusts == i, :]
+
+            plt.scatter(x_clust[:, x], x_clust[:, y],
+                        color=colors[i],
+                        label=i,
+                        alpha=0.6)
+        plt.legend(loc='best')
+        plt.show()
+    else:
+        plt.scatter(x_svd[:, x], x_svd[:, y], c=x_svd[:, z],
+                    alpha=0.6,
+                    cmap=plt.get_cmap('hot'))
+        plt.show()
 
 if __name__ == "__main__":
 
@@ -80,13 +122,22 @@ if __name__ == "__main__":
 
     # get unique words in the names, to strip from the count vectors
     name_words = create_name_words(names)
+    # chalf, cherry, chocolate, crema, dark, dry, flor, flora, flowers, forest,
+    # forests, graham, grapes, iron, mineral, moss, mt., mountain, mountains,
+    # nickel, oak, oaks, profile, sea, smoke, stone, stones, strong, sugar,
+    # turkey, unoaked, velvet, wood
 
     # create stopwords set from all english stop words, plus words included in
     # wine names
     stopwords = name_words.union(english_stop_words)
+    stopwords = stopwords.union(french_stop_words)
+    stopwords = stopwords.union(wine_names_places)
 
     # instantiate count vectorizer
-    cv = CountVectorizer(decode_error='ignore', stop_words=stopwords)
+    cv = CountVectorizer(decode_error='ignore',
+                         stop_words=stopwords,
+                         ngram_range=(1, 2),
+                         max_features=10000)
 
     # get count vector for each review
     count_vecs = cv.fit_transform(X)
@@ -94,10 +145,53 @@ if __name__ == "__main__":
     # sum count vectors for matching wine names
     cv_by_name = sum_vectors_by_name(count_vecs, labels=y)
 
+    # tfidf transform the summed count vectors
     tf = TfidfTransformer()
 
     tfidf = tf.fit_transform(cv_by_name)
 
+    # cluster using k-means
     km = KMeans()
 
     clusts = km.fit_predict(tfidf)
+
+    # print out the top terms by cluster (avg magnitude of the tfidf vectors)
+    print_top_clust_words(clusts, cv, tfidf, 10)
+
+    # latent semantic analysis (SVD on TFIDF)
+    svd = TruncatedSVD(n_components=50)
+
+    x_svd = svd.fit_transform(tfidf)
+
+    # plot the X and Y principal components
+    plot_svd(x_svd, clusts, x=0, y=1)
+
+    # LDA matrix factorization
+    lda = LatentDirichletAllocation(n_topics=8)
+
+    lda.fit(tfidf)
+
+    doc_matrix_lda = lda.transform(tfidf)
+    term_matrix_lda = lda.components_
+
+    print_top_matrix_words(cv, term_matrix_lda, 10)
+
+    # NMF
+    nmf = NMF(n_components=8)
+    nmf.fit(tfidf)
+
+    term_matrix_nmf = nmf.components_
+
+    print_top_matrix_words(cv, term_matrix_nmf, 10)
+
+    # visualize with TSNE
+
+    tsne = TSNE(n_components=2, random_state=0)
+
+    x_tsne = tsne.fit_transform(x_svd)
+    plot_svd(x_tsne, clusts, x=0, y=1)
+
+    # ChAC/teau LA(c)oville Barton
+    # Chateau Leoville Barton
+    # A1/4 = u
+    # MoA<<t = Moet

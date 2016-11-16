@@ -1,3 +1,38 @@
+
+# generated looking at top words within clusters
+wine_names_places = set(['yquem', 'bordeaux', 'crus', 'cab', 'ugc', 'cali',
+                         'california', 'ny', ' hotel', 'st julien', 'union',
+                         'drake', 'palace', 'chicago', 'illinois',
+                         'convention', 'centre', 'primeur', 'paulee',
+                         'new york', 'york', 'francisco', 'london',
+                         'metropolitan', 'pavilion', 'lynch', 'bages',
+                         'new world', 'burgundy', 'vega', 'sicilia',
+                         'julien', 'zin', 'bottle', 'bottles', 'cdp',
+                         'chateauneuf', 'bouteille', 'kirsch', 'wa', 'usa'
+                         'canada', 'og', 'av', 'och'])
+
+# source: http://www.ranks.nl/stopwords/french
+# ran strings through unidecode to convert to ascii
+french_stop_words = set(['alors', 'au', 'aucuns', 'aussi', 'autre', 'avant',
+                         'avec', 'avoir', 'bon', 'car', 'ce', 'cela', 'ces',
+                         'ceux', 'chaque', 'ci', 'comme', 'comment', 'dans',
+                         'des', 'du', 'dedans', 'dehors', 'depuis', 'devrait',
+                         'doit', 'donc', 'dos', 'dA(c)but', 'elle', 'elles',
+                         'en', 'encore', 'essai', 'est', 'et', 'eu', 'fait',
+                         'faites', 'fois', 'font', 'hors', 'ici', 'il', 'ils',
+                         'je', 'juste', 'la', 'le', 'les', 'leur', 'lA', 'ma',
+                         'maintenant', 'mais', 'mes', 'mine', 'moins', 'mon',
+                         'mot', 'mAame', 'ni', 'nommA(c)s', 'notre', 'nous',
+                         'ou', 'oA1', 'par', 'parce', 'pas', 'peut', 'peu',
+                         'plupart', 'pour', 'pourquoi', 'quand', 'que', 'quel',
+                         'quelle', 'quelles', 'quels', 'qui', 'sa', 'sans',
+                         'ses', 'seulement', 'si', 'sien', 'son', 'sont',
+                         'sous', 'soyez', 'sujet', 'sur', 'ta', 'tandis',
+                         'tellement', 'tels', 'tes', 'ton', 'tous', 'tout',
+                         'trop', 'trA"s', 'tu', 'voient', 'vont', 'votre',
+                         'vous', 'vu', 'ASSa', 'A(c)taient', 'A(c)tat',
+                         'A(c)tions', 'A(c)tA(c)', 'Aatre'])
+
 # souce:
 # https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/...
 # ...feature_extraction/stop_words.py
