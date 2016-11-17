@@ -1,4 +1,13 @@
 
+# words to keep
+# words inappropriately removed by just taking out words from names
+wine_words = ['chalk', 'cherry', 'chocolate', 'crema', 'dark', 'dry', 'flor',
+              'flora', 'flowers', 'forest', 'forests', 'graham', 'grapes',
+              'iron', 'mineral', 'moss', 'nickel', 'oak', 'oaks', 'profile',
+              'sea', 'smoke', 'stone', 'stones', 'strong', 'sugar', 'turkey',
+              'unoaked', 'velvet', 'wood']
+
+
 # generated looking at top words within clusters
 wine_names_places = set(['yquem', 'bordeaux', 'crus', 'cab', 'ugc', 'cali',
                          'california', 'ny', ' hotel', 'st julien', 'union',

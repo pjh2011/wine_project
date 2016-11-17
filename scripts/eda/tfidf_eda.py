@@ -3,7 +3,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.cluster import KMeans
 import numpy as np
 from scipy import sparse
-from stopwords import english_stop_words, wine_names_places, french_stop_words
+from stopwords import *
 import matplotlib.pyplot as plt
 from sklearn.decomposition import TruncatedSVD, NMF, LatentDirichletAllocation
 from sklearn.manifold import TSNE
@@ -122,16 +122,15 @@ if __name__ == "__main__":
 
     # get unique words in the names, to strip from the count vectors
     name_words = create_name_words(names)
-    # chalf, cherry, chocolate, crema, dark, dry, flor, flora, flowers, forest,
-    # forests, graham, grapes, iron, mineral, moss, mt., mountain, mountains,
-    # nickel, oak, oaks, profile, sea, smoke, stone, stones, strong, sugar,
-    # turkey, unoaked, velvet, wood
 
     # create stopwords set from all english stop words, plus words included in
     # wine names
     stopwords = name_words.union(english_stop_words)
     stopwords = stopwords.union(french_stop_words)
     stopwords = stopwords.union(wine_names_places)
+
+    for w in wine_words:
+        stopwords.remove(w)
 
     # instantiate count vectorizer
     cv = CountVectorizer(decode_error='ignore',
@@ -164,7 +163,7 @@ if __name__ == "__main__":
     x_svd = svd.fit_transform(tfidf)
 
     # plot the X and Y principal components
-    plot_svd(x_svd, clusts, x=0, y=1)
+    # plot_svd(x_svd, clusts, x=0, y=1)
 
     # LDA matrix factorization
     lda = LatentDirichletAllocation(n_topics=8)
