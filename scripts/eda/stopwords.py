@@ -2,7 +2,7 @@
 # words to keep
 # words inappropriately removed by just taking out words from names
 wine_words = ['chalk', 'cherry', 'chocolate', 'crema', 'dark', 'dry', 'flor',
-              'flora', 'flowers', 'forest', 'forests', 'graham', 'grapes',
+              'flora', 'flowers', 'forest', 'graham', 'grapes',
               'iron', 'mineral', 'moss', 'nickel', 'oak', 'oaks', 'profile',
               'sea', 'smoke', 'stone', 'stones', 'strong', 'sugar', 'turkey',
               'unoaked', 'velvet', 'wood']

@@ -55,16 +55,16 @@ def print_top_clust_words(clusts, cv_obj, tfidf_mat, n_words):
 
     word_lookup = dict(zip(vals, keys))
 
-    for j in np.unique(clusts):
-        clust_cvs = tfidf_mat[clusts == j, :]
+    for i in np.unique(clusts):
+        clust_cvs = tfidf_mat[clusts == i, :]
         ranked_words = np.fliplr(np.argsort(clust_cvs.mean(axis=0)))
 
         print "#################"
-        print "CLUSTER NUMBER: ", j
+        print "CLUSTER NUMBER: ", i
         print "#################"
 
-        for i in range(n_words):
-            print word_lookup[ranked_words[0, i]]
+        for j in range(n_words):
+            print word_lookup[ranked_words[0, j]]
 
         print '\n'
 
@@ -75,6 +75,9 @@ def print_top_matrix_words(cv_obj, term_matrix, n_words):
 
     word_lookup = dict(zip(vals, keys))
 
+    if isinstance(term_matrix, np.ndarray):
+        term_matrix = np.asmatrix(term_matrix)
+
     for i in range(term_matrix.shape[0]):
         ranked_words = np.fliplr(np.argsort(term_matrix[i, :]))
 
@@ -83,12 +86,12 @@ def print_top_matrix_words(cv_obj, term_matrix, n_words):
         print "#################"
 
         for j in range(n_words):
-            print word_lookup[ranked_words[j]]
+            print word_lookup[ranked_words[0, j]]
 
         print '\n'
 
 
-def plot_svd(x_svd, clusts=None, x=0, y=1, z=2):
+def plot_dim_red(x_svd, clusts=None, x=0, y=1, z=2):
     colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'brown', 'gold', 'brown']
 
     if clusts is not None:
@@ -129,6 +132,8 @@ if __name__ == "__main__":
     stopwords = stopwords.union(french_stop_words)
     stopwords = stopwords.union(wine_names_places)
 
+    # taking out anything that occurs in a name was too brute force, remove
+    # some common wine words from the stop list
     for w in wine_words:
         stopwords.remove(w)
 
@@ -158,12 +163,12 @@ if __name__ == "__main__":
     print_top_clust_words(clusts, cv, tfidf, 10)
 
     # latent semantic analysis (SVD on TFIDF)
-    svd = TruncatedSVD(n_components=50)
+    svd = TruncatedSVD(n_components=100)
 
     x_svd = svd.fit_transform(tfidf)
 
     # plot the X and Y principal components
-    # plot_svd(x_svd, clusts, x=0, y=1)
+    # plot_dim_red(x_svd, clusts, x=0, y=1)
 
     # LDA matrix factorization
     lda = LatentDirichletAllocation(n_topics=8)
@@ -177,7 +182,7 @@ if __name__ == "__main__":
 
     # NMF
     nmf = NMF(n_components=8)
-    nmf.fit(tfidf)
+    doc_matrix_nmf = nmf.fit_transform(tfidf)
 
     term_matrix_nmf = nmf.components_
 
@@ -188,9 +193,15 @@ if __name__ == "__main__":
     tsne = TSNE(n_components=2, random_state=0)
 
     x_tsne = tsne.fit_transform(x_svd)
-    plot_svd(x_tsne, clusts, x=0, y=1)
+    plot_dim_red(x_tsne, clusts, x=0, y=1)
 
     # ChAC/teau LA(c)oville Barton
     # Chateau Leoville Barton
     # A1/4 = u
     # MoA<<t = Moet
+
+    # pull out top topic from each point in nmf doc matrix
+    nmf_top_topics = np.argsort(doc_matrix_nmf, axis=1)[:, -1]
+
+    # visualize top topics with tsne
+    plot_dim_red(x_tsne, nmf_top_topics, x=0, y=1)
