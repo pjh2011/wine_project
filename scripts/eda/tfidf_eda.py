@@ -5,7 +5,7 @@ import numpy as np
 from scipy import sparse
 from stopwords import *
 import matplotlib.pyplot as plt
-from sklearn.decomposition import TruncatedSVD, NMF, LatentDirichletAllocation
+from sklearn.decomposition import TruncatedSVD, NMF
 from sklearn.manifold import TSNE
 
 
@@ -21,6 +21,19 @@ def read_files(names):
             df = pd.concat([df, tmp])
 
     return df
+
+
+def clean_accents(string):
+    # ChAC/teau LA(c)oville Barton
+    # Chateau Leoville Barton
+    # A1/4 = u
+    # MoA<<t = Moet
+    replace_dict = {'AC/': 'a', 'A(c)': 'e', 'A1/4': 'u', 'A<<': 'e'}
+
+    for accent in replace_dict:
+        string = string.replace(accent, replace_dict[accent])
+
+    return string
 
 
 def sum_vectors_by_name(count_vecs, labels):
@@ -170,16 +183,6 @@ if __name__ == "__main__":
     # plot the X and Y principal components
     # plot_dim_red(x_svd, clusts, x=0, y=1)
 
-    # LDA matrix factorization
-    lda = LatentDirichletAllocation(n_topics=8)
-
-    lda.fit(tfidf)
-
-    doc_matrix_lda = lda.transform(tfidf)
-    term_matrix_lda = lda.components_
-
-    print_top_matrix_words(cv, term_matrix_lda, 10)
-
     # NMF
     nmf = NMF(n_components=8)
     doc_matrix_nmf = nmf.fit_transform(tfidf)
@@ -190,15 +193,10 @@ if __name__ == "__main__":
 
     # visualize with TSNE
 
-    tsne = TSNE(n_components=2, random_state=0)
+    tsne = TSNE(n_components=2)
 
     x_tsne = tsne.fit_transform(x_svd)
     plot_dim_red(x_tsne, clusts, x=0, y=1)
-
-    # ChAC/teau LA(c)oville Barton
-    # Chateau Leoville Barton
-    # A1/4 = u
-    # MoA<<t = Moet
 
     # pull out top topic from each point in nmf doc matrix
     nmf_top_topics = np.argsort(doc_matrix_nmf, axis=1)[:, -1]
