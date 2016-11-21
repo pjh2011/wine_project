@@ -7,6 +7,7 @@ from stopwords import *
 import matplotlib.pyplot as plt
 from sklearn.decomposition import TruncatedSVD, NMF
 from sklearn.manifold import TSNE
+import cPickle as pickle
 
 
 def read_files(names):
@@ -153,7 +154,7 @@ if __name__ == "__main__":
     # instantiate count vectorizer
     cv = CountVectorizer(decode_error='ignore',
                          stop_words=stopwords,
-                         ngram_range=(1, 2),
+                         ngram_range=(1, 1),
                          max_features=10000)
 
     # get count vector for each review
@@ -203,3 +204,16 @@ if __name__ == "__main__":
 
     # visualize top topics with tsne
     plot_dim_red(x_tsne, nmf_top_topics, x=0, y=1)
+
+    # Write pickle files to be loaded and used by predictor
+    f = open('../predict/pickle_files/cv.pkl', 'w')
+    pickle.dump(cv, f)
+    f. close()
+
+    f = open('../predict/pickle_files/tf.pkl', 'w')
+    pickle.dump(tf, f)
+    f. close()
+
+    f = open('../predict/pickle_files/tfidf.pkl', 'w')
+    pickle.dump(tfidf, f)
+    f. close()

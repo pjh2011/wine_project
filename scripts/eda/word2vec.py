@@ -76,7 +76,7 @@ model.init_sims(replace=True)
 
 # It can be helpful to create a meaningful model name and
 # save the model for later use. You can load it later using Word2Vec.load()
-model_name = "wine_word2vec_model"
+model_name = "wine_word2vec_model.model"
 model.save(model_name)
 
 print model.most_similar("corked")

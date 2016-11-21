@@ -40,8 +40,8 @@ if __name__ == "__main__":
 
     ids = reviews.id.unique()
 
-    start = 7001
-    finish = len(ids) - 1
+    start = 0
+    finish = 1000
     jsonify_n(start, finish, reviews['id'].unique())
 
     # http://www.cellartracker.com/wine.asp?iWine=874157

@@ -1,3 +1,5 @@
 *.json
 *.csv
 *.pyc
+*.npy
+*.pkl
