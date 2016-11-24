@@ -35,7 +35,8 @@ def review_to_sentences(review, sent_tokenizer):
 
     return sentences
 
-reviews = read_files(['first_1000.csv', 'next_9000.csv'])
+reviews = read_files(
+    ['first_1000.csv', 'next_9000.csv', 'remainder_reviews.csv'])
 reviews = reviews[~reviews['review_text'].isnull()]
 
 y = reviews['wine_name']
@@ -59,7 +60,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
 
 # Set values for various parameters
 num_features = 1000    # Word vector dimensionality
-min_word_count = 40   # Minimum word count
+min_word_count = 20   # Minimum word count
 num_workers = 8       # Number of threads to run in parallel
 context = 10          # Context window size
 downsampling = 1e-3   # Downsample setting for frequent words

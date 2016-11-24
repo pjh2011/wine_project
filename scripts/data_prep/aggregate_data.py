@@ -108,7 +108,6 @@ def merge_review_jsons(folder_name):
 
 
 def merge_side_jsons(folder_name):
-    return "need to fix parsehub captcha first"
     path = '../../data/raw/' + folder_name
 
     # loop over files in the folder, merge the dataframes
@@ -123,7 +122,7 @@ def merge_side_jsons(folder_name):
 
     # each entry is a dictionary, only length 3 was populated with data from
     # the scraper
-    num_els = df['results'].apply(lambda x: len(x['wine']))
+    num_els = df['results'].apply(lambda x: len(x))
 
     df = df[num_els == 3]
 
@@ -180,4 +179,5 @@ if __name__ == "__main__":
     # df = merge_review_jsons('next_9000')
     # df.to_csv('../../data/dataframes/next_9000.csv', index=False)
 
-    df = merge_side_jsons('side_data/first_10000')
+    df = merge_side_jsons('remainder')
+    df.to_csv('../../data/dataframes/remainder_reviews.csv', index=False)

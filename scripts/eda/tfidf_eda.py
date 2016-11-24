@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import TruncatedSVD, NMF
 from sklearn.manifold import TSNE
 import cPickle as pickle
+import seaborn
 
 
 def read_files(names):
@@ -105,29 +106,44 @@ def print_top_matrix_words(cv_obj, term_matrix, n_words):
         print '\n'
 
 
-def plot_dim_red(x_svd, clusts=None, x=0, y=1, z=2):
-    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'brown', 'gold', 'brown']
+def plot_dim_red(x_red, clusts=None, labels=None, title=None, x=0, y=1, z=2,
+                 colors=['0.3', 'r', 'g', 'b', 'm', 'y', 'c', 'brown', 'gold',
+                         'brown']):
 
     if clusts is not None:
-        for i in np.unique(clusts):
-            x_clust = x_svd[clusts == i, :]
+        for i in sorted(np.unique(clusts)):
+            x_clust = x_red[clusts == i, :]
+
+            if labels is not None:
+                l = labels[i]
+            else:
+                l = i
 
             plt.scatter(x_clust[:, x], x_clust[:, y],
                         color=colors[i],
-                        label=i,
-                        alpha=0.6)
+                        label=l,
+                        alpha=0.2)
         plt.legend(loc='best')
+
+        if title is not None:
+            plt.title(title)
+
         plt.show()
     else:
-        plt.scatter(x_svd[:, x], x_svd[:, y], c=x_svd[:, z],
-                    alpha=0.6,
+        plt.scatter(x_red[:, x], x_red[:, y], c=x_red[:, z],
+                    alpha=0.2,
                     cmap=plt.get_cmap('hot'))
+
+        if title is not None:
+            plt.title(title)
+
         plt.show()
 
 if __name__ == "__main__":
 
     # read in data from cleaned csvs
-    reviews = read_files(['first_1000.csv', 'next_9000.csv'])
+    reviews = read_files(
+        ['first_1000.csv', 'next_9000.csv', 'remainder_reviews.csv'])
     reviews = reviews[~reviews['review_text'].isnull()]
 
     # get text and name labels into numpy arrays
@@ -155,7 +171,7 @@ if __name__ == "__main__":
     cv = CountVectorizer(decode_error='ignore',
                          stop_words=stopwords,
                          ngram_range=(1, 1),
-                         max_features=10000)
+                         max_features=5000)
 
     # get count vector for each review
     count_vecs = cv.fit_transform(X)
@@ -169,7 +185,7 @@ if __name__ == "__main__":
     tfidf = tf.fit_transform(cv_by_name)
 
     # cluster using k-means
-    km = KMeans()
+    km = KMeans(n_clusters=2)
 
     clusts = km.fit_predict(tfidf)
 
@@ -185,25 +201,40 @@ if __name__ == "__main__":
     # plot_dim_red(x_svd, clusts, x=0, y=1)
 
     # NMF
-    nmf = NMF(n_components=8)
+    nmf = NMF(n_components=4)
     doc_matrix_nmf = nmf.fit_transform(tfidf)
 
     term_matrix_nmf = nmf.components_
 
     print_top_matrix_words(cv, term_matrix_nmf, 10)
 
-    # visualize with TSNE
-
-    tsne = TSNE(n_components=2)
-
-    x_tsne = tsne.fit_transform(x_svd)
-    plot_dim_red(x_tsne, clusts, x=0, y=1)
-
     # pull out top topic from each point in nmf doc matrix
     nmf_top_topics = np.argsort(doc_matrix_nmf, axis=1)[:, -1]
 
+    # # visualize with TSNE
+    #
+    # tsne = TSNE(n_components=2)
+    #
+    # x_tsne = tsne.fit_transform(x_svd)
+    # plot_dim_red(x_tsne, clusts, x=0, y=1)
+
     # visualize top topics with tsne
-    plot_dim_red(x_tsne, nmf_top_topics, x=0, y=1)
+    plot_dim_red(x_svd, nmf_top_topics, x=0, y=1)
+
+    cabs = map(lambda x: ('Cabernet' in x) * 1, names)
+    merlots = map(lambda x: ('Merlot' in x) * 1, names)
+    pinots = map(lambda x: ('Pinot Noir' in x) * 1, names)
+    champagnes = map(lambda x: ('Champagne' in x) * 1, names)
+    rieslings = map(lambda x: ('Riesling' in x) * 1, names)
+    syrahs = map(lambda x: ('Syrah' in x) * 1, names)
+    zins = map(lambda x: ('Zinfandel' in x) * 1, names)
+    sauv = map(lambda x: ('Sauvignon Blanc' in x) * 1, names)
+    chards = map(lambda x: ('Chardonnay' in x) * 1, names)
+    blancs = map(lambda x: ('Blanc' in x) * 1, names)
+    chablis = map(lambda x: ('Chablis' in x) * 1, names)
+
+    # visualize top topics with tsne
+    plot_dim_red(x_svd, chablis, x=0, y=1)
 
     # Write pickle files to be loaded and used by predictor
     f = open('../predict/pickle_files/cv.pkl', 'w')

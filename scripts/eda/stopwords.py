@@ -18,7 +18,7 @@ wine_names_places = set(['yquem', 'bordeaux', 'crus', 'cab', 'ugc', 'cali',
                          'new world', 'burgundy', 'vega', 'sicilia',
                          'julien', 'zin', 'bottle', 'bottles', 'cdp',
                          'chateauneuf', 'bouteille', 'kirsch', 'wa', 'usa'
-                         'canada', 'og', 'av', 'och'])
+                         'canada', 'og', 'av', 'och', 'kirsch'])
 
 # source: http://www.ranks.nl/stopwords/french
 # ran strings through unidecode to convert to ascii
