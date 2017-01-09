@@ -13,8 +13,6 @@ I used ParseHub's web scraping platform to scrape data from cellartracker.com, t
 
 ## Modeling
 
-### Process
-
 ![alt tag](https://raw.githubusercontent.com/pjh2011/wine_project/master/imgs/pipeline.png)
 
 ### Term Frequency - Inverse Document Frequency
