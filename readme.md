@@ -13,6 +13,10 @@ I used ParseHub's web scraping platform to scrape data from cellartracker.com, t
 
 ## Modeling
 
+### Process
+
+![alt tag](https://raw.githubusercontent.com/pjh2011/wine_project/master/imgs/pipeline.png)
+
 ### Term Frequency - Inverse Document Frequency
 
 I started with TF-IDF "bag of words" analysis of the wine tasting notes. I found that many people were mentioning varietal and region names in their tasting notes contributing to some target leakage. Using K-means clustering I found that wines were clustering very neatly along their varietal types. For example most of the Pinot Noirs ended up in one cluster and most of the Cabernets in another cluster. After removing stopwords specific to wine eg. "Kirsch", "Crus", "Cab", and "Pinot", I found that clusters were still sensible with white wines and red wines cleanly separating, but particular varietals were not homogeneously due to leakage.
@@ -24,10 +28,6 @@ I wanted to incorporate Word2Vec due to the property that word vectors encode se
 After training Word2Vec on my entire corpus I had a unique vector for each word. To create "wine vectors" I needed a way to aggregate word vectors that composed each tasting note. Using TF-IDF had already produced relative word importances within each tasting note, so rather than simply averaging or averaging by raw counts, I used the TF-IDF weights to create a weighted sum of the word vectors for the words that appeared in each tasting note. This weighted sum created wine vectors that were in the same dimensional space as word vectors, which meant vector arithmetic could be used to combine wine and word vectors.
 
 ## Validation
-
-### Process
-
-![alt tag](https://raw.githubusercontent.com/pjh2011/wine_project/master/imgs/pipeline.png)
 
 ### T-SNE and NMF
 
