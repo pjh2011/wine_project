@@ -5,9 +5,7 @@ This project attempts to find similar wines based on user-written "tasting notes
 
 Please see the presentation final slides at the following link:
 
-```
-URL
-```
+<https://docs.google.com/presentation/d/1TNsmQpA2uH8UBXJ--EPIYQ1Rgi_UHCUpkLsZ-T4bu9c/pub?start=false&loop=false&delayms=3000>
 
 ## Data Collection
 
@@ -42,3 +40,23 @@ I overlayed the T-SNE 2-dimensional projections with the top NMF topic for each 
 What I found was that white wines and red wines formed distinct clusters, the red wine cluster was far less homoegenous than the white wine cluster, and the different red wine "flavors" occupied different zones of the red wine cluster, but there was quite a bit of overlap. All of these matched my prior expectations, which gave me confidence there was logic to the resulting wine vectors.
 
 ### Varietal-vs-Varietal Cosine Distances
+
+The next quality check I did on the wine vectors was to test a hypothesis I expected to be true. I expected varietals that are commonly accepted to be similar to have much smaller cosine distances than varietals which are accepted to be quite different. This is exactly what I saw, for example here are the cosine distances between two French red wine varietals which are commonly thought to be similar in taste:
+
+```
+[IMAGE LINK]
+```
+
+And cosine distances for two varietals which we would expect to taste quiet different, two French grapes one red and one white:
+
+```
+[IMAGE LINK]
+```
+
+## Application
+
+With each wine converted into a vector, and the results validated using visualization and a common sense check on the inter-varietal cosine distances, I could then use item-item similarity to make recommendations. The simplest application is to just simply search for the most similar wines to a given wine.
+
+Since the wines and words are projected into the same vector space, and Word2Vec vectors have the property that compositions of vectors generally obey syntactic and grammatical rules, the 'cooler' search you can do is on compositions.
+
+For example let's say I really enjoyed an expensive French grape red wine - the 1990 Caymus Cabernet Sauvignon - but I wanted to try the most similar white wine to it. Adding the vector for 'white' and subtracting 'red' I can then find the most similar wine vectors to the composite vector. I find that the 2011 and 2010 Kistler Chardonnays and the 2004 Chateau d'Yquem are the most similar white wines to my 1990 Caymus.
