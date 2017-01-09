@@ -25,6 +25,10 @@ After training Word2Vec on my entire corpus I had a unique vector for each word.
 
 ## Validation
 
+### Process
+
+![alt tag](https://raw.githubusercontent.com/pjh2011/wine_project/master/imgs/pipeline.png)
+
 ### T-SNE and NMF
 
 To verify that these wine vectors made sense I relied on two methods: visualization and varietal-vs-varietal cosine distance comparison. To visualize my high-dimensional wine vectors I used the T-Distributed Stochastic Neighbor Estimation (T-SNE) algorithm. T-SNE attempts to find low dimensional representation of the data set which has the property that pairwise probability distributions in the low dimensional projection are close to those in high-dimensions. It does this by randomly moving points around in the low dimensional space until a satisfactory representation is found.
@@ -33,9 +37,8 @@ I then used Non-Negative Matrix Factorization to model latent topics in the wine
 
 I overlayed the T-SNE 2-dimensional projections with the top NMF topic for each wine:
 
-```
-[IMAGE LINK]
-```
+![alt tag](https://raw.githubusercontent.com/pjh2011/wine_project/master/imgs/tsne_NMF_Topics.png)
+
 
 What I found was that white wines and red wines formed distinct clusters, the red wine cluster was far less homoegenous than the white wine cluster, and the different red wine "flavors" occupied different zones of the red wine cluster, but there was quite a bit of overlap. All of these matched my prior expectations, which gave me confidence there was logic to the resulting wine vectors.
 
@@ -43,15 +46,11 @@ What I found was that white wines and red wines formed distinct clusters, the re
 
 The next quality check I did on the wine vectors was to test a hypothesis I expected to be true. I expected varietals that are commonly accepted to be similar to have much smaller cosine distances than varietals which are accepted to be quite different. This is exactly what I saw, for example here are the cosine distances between two French red wine varietals which are commonly thought to be similar in taste:
 
-```
-[IMAGE LINK]
-```
+![alt tag](https://raw.githubusercontent.com/pjh2011/wine_project/master/imgs/pn_vs_merlot.png)
 
 And cosine distances for two varietals which we would expect to taste quiet different, two French grapes one red and one white:
 
-```
-[IMAGE LINK]
-```
+![alt tag](https://raw.githubusercontent.com/pjh2011/wine_project/master/imgs/chablis_vs_pn.png)
 
 ## Application
 
