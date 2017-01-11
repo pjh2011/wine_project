@@ -1,5 +1,8 @@
+#server.R
+
 library(lsa)
 
+#load data
 if ('wineFiles.rda' %in% list.files(path = 'data/')) {
     load('data/wineFiles.rda')
 } else {
@@ -20,6 +23,9 @@ if ('wineFiles.rda' %in% list.files(path = 'data/')) {
          file = "data/wineFiles.rda")
 }
 
+# function to find the closest wines by cosine distance
+# can search by either a wine, a composition of words, or a
+# combination of the two
 findClosestWines <- function(wineName, posAttr, negAttr, weights, wineVectors, 
                              names, wordVectors, words) {
     
@@ -59,6 +65,9 @@ findClosestWines <- function(wineName, posAttr, negAttr, weights, wineVectors,
         dists[i] <- cosine(as.vector(searchVector), wineVectors[i,])
     }
     
+    # names[rev(tail(order(dists))),]
+    
+    # if name == top result, just go from 2:11 instead of 1:10
     return(dists)
 }
 

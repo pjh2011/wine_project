@@ -119,7 +119,7 @@ if __name__ == "__main__":
     dists = np.apply_along_axis(lambda x: cosine(x, wv1),
                                 axis=1,
                                 arr=wine_vectors)
-    print names[np.argsort(dists)][1:5]
+    print names[np.argsort(dists)][0:5]
 
     # using list of words
     # add them up, take cosine similarity across all wines
