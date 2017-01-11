@@ -59,7 +59,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
                     level=logging.INFO)
 
 # Set values for various parameters
-num_features = 1000    # Word vector dimensionality
+num_features = 250    # Word vector dimensionality
 min_word_count = 20   # Minimum word count
 num_workers = 8       # Number of threads to run in parallel
 context = 10          # Context window size

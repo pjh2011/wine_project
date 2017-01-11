@@ -25,19 +25,6 @@ def read_files(names):
     return df
 
 
-def clean_accents(string):
-    # ChAC/teau LA(c)oville Barton
-    # Chateau Leoville Barton
-    # A1/4 = u
-    # MoA<<t = Moet
-    replace_dict = {'AC/': 'a', 'A(c)': 'e', 'A1/4': 'u', 'A<<': 'e'}
-
-    for accent in replace_dict:
-        string = string.replace(accent, replace_dict[accent])
-
-    return string
-
-
 def sum_vectors_by_name(count_vecs, labels):
     n_unique = len(labels.unique())
     n_terms = count_vecs.shape[1]
@@ -185,12 +172,12 @@ if __name__ == "__main__":
     tfidf = tf.fit_transform(cv_by_name)
 
     # cluster using k-means
-    km = KMeans(n_clusters=2)
+    # km = KMeans(n_clusters=2)
 
-    clusts = km.fit_predict(tfidf)
+    # clusts = km.fit_predict(tfidf)
 
     # print out the top terms by cluster (avg magnitude of the tfidf vectors)
-    print_top_clust_words(clusts, cv, tfidf, 10)
+    # print_top_clust_words(clusts, cv, tfidf, 10)
 
     # latent semantic analysis (SVD on TFIDF)
     svd = TruncatedSVD(n_components=100)
@@ -201,7 +188,7 @@ if __name__ == "__main__":
     # plot_dim_red(x_svd, clusts, x=0, y=1)
 
     # NMF
-    nmf = NMF(n_components=4)
+    nmf = NMF(n_components=6)
     doc_matrix_nmf = nmf.fit_transform(tfidf)
 
     term_matrix_nmf = nmf.components_
