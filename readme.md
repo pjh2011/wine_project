@@ -52,6 +52,8 @@ And cosine distances for two varietals which we would expect to taste quiet diff
 
 ## Application
 
+<https://phuse2.shinyapps.io/wine2vec/>
+
 With each wine converted into a vector, and the results validated using visualization and a common sense check on the inter-varietal cosine distances, I could then use item-item similarity to make recommendations. The simplest application is to just simply search for the most similar wines to a given wine.
 
 Since the wines and words are projected into the same vector space, and Word2Vec vectors have the property that compositions of vectors generally obey syntactic and grammatical rules, the 'cooler' search you can do is on compositions.

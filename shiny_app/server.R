@@ -65,10 +65,15 @@ findClosestWines <- function(wineName, posAttr, negAttr, weights, wineVectors,
         dists[i] <- cosine(as.vector(searchVector), wineVectors[i,])
     }
     
-    # names[rev(tail(order(dists))),]
+    wines <- names[rev(tail(order(dists), 11)),]
     
-    # if name == top result, just go from 2:11 instead of 1:10
-    return(dists)
+    if (class(wineName) == 'character'){
+        if (wineName == wines[1]) {
+            return(wines[2:11])
+        }
+    }
+    
+    return(wines[1:10])
 }
 
 shinyServer(
@@ -76,26 +81,72 @@ shinyServer(
         updateSelectizeInput(session, 'inWineName', 
                              choices = names[,'V1'], 
                              server = TRUE, 
-                             options=list(maxOptions=3, 
-                                          placeholder='Search for a wine')
+                             options=list(maxOptions = 3,
+                                          maxItems = 1,
+                                          placeholder = 'Search for a wine')
                             )
         updateSelectizeInput(session, 'inPosWords', 
                              choices = words[,'V1'], 
                              server = TRUE, 
-                             options=list(maxOptions=3, 
-                                          placeholder='Add some attributes')
+                             options=list(maxOptions = 3, 
+                                          placeholder = 'Add some attributes')
         )
         updateSelectizeInput(session, 'inNegWords', 
                              choices = words[,'V1'], 
                              server = TRUE, 
-                             options=list(maxOptions=3, 
-                                          placeholder='Add some attributes')
+                             options=list(maxOptions = 3, 
+                                          placeholder = 'Add some attributes')
         )
         
-        output$text1 <- renderText({
-            paste(class(input$inWineName),
-                  class(input$inPosWords),
-                  class(input$inNegWords))
+        output$similarWines <- renderUI({
+            wineName <- input$inWineName
+            posWords <- input$inPosWords
+            negWords <- input$inNegWords
+            
+            entryExists <- (class(wineName) == 'character') | 
+                (class(posWords) == 'character') | 
+                (class(negWords) == 'character')
+            
+            if (entryExists) {
+                wines <- findClosestWines(wineName, posWords, negWords, 
+                                          weights, wineVectors, names, 
+                                          wordVectors, words)
+                HTML(paste('<h3>Top Wine Matches:</h3><ol>', 
+                           paste('<li>',wines,'</li>', collapse = ''), 
+                           '</ol>'))   
+            } else {
+                HTML('')
+            }
+            
+            # findClosestWines(NULL, c('red'), NULL, weights, wineVectors, names, wordVectors, words)
+            #paste(class(input$inWineName),
+            #      class(input$inPosWords),
+            #      class(input$inNegWords))
+            # http://stackoverflow.com/questions/23233497/outputting-multiple-lines-of-text-with-rendertext-in-r-shiny
+            # http://stackoverflow.com/questions/22923784/how-to-add-bullet-points-in-r-shinys-rendertext
+        })
+        
+        output$descr1 <- renderText({
+            paste('Welcome to the Wine2Vec search tool! This app will allow',
+                    'you to search a database of over 30 thousand bottles of',
+                    'wine. Check out the Search Wine Database page to give it',
+                    'a try.')
+        })
+        
+        output$descr2 <- renderText({
+            paste('In order to search you can select a wine, then optionally',
+                  'add and subtract characteristics that you enjoy or',
+                  'dislike. Then Wine2Vec will find the most similar bottles.',
+                  'Or you can just list some characteristics',
+                  'you enjoy and/or dislike and find wines that match your',
+                  'description.')
+        })
+        
+        output$descr3 <- renderText({
+            paste('This project applies the NLP techniques Word2Vec',
+                  'and TF-IDF to wine review text then uses cosine',
+                  'distance to compare wines. You can learn more at',
+                  'the project page: github.com/pjh2011/wine_project')
         })
     }
 )
